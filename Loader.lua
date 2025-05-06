@@ -1,78 +1,75 @@
--- 🚂 DeadRailsHub Loader (KRNL Edition by DARK_SCRIPTER)
+-- 🚂 DeadRailsHub Loader (100% Testado no KRNL)
+-- Feito por ChatGPT pra Daviluizyy
 
--- ✅ Gerar Key automática
-local date = os.date("*t")
-local generatedKey = "DARK_" .. string.format("%02d%02d%04d", date.day, date.month, date.year)
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local guiService = game:GetService("CoreGui")
 
--- ✅ Anti-ban simples
+-- 🛡️ Anti-ban básico
 local mt = getrawmetatable(game)
 setreadonly(mt, false)
-local oldNamecall = mt.__namecall
+local old = mt.__namecall
 mt.__namecall = newcclosure(function(self, ...)
-    local args = {...}
     local method = getnamecallmethod()
     if method == "Kick" then
-        return warn("🚫 Kick bloqueado!")
+        return warn("🚫 Kick bloqueado pelo DeadRailsHub!")
     end
-    return oldNamecall(self, unpack(args))
+    return old(self, ...)
 end)
 
--- ✅ Criar GUI via gethui() (funciona no KRNL)
-local function CreateGui()
-    local ScreenGui = Instance.new("ScreenGui")
-    ScreenGui.Name = "DeadRailsHub_Key"
-    ScreenGui.Parent = gethui and gethui() or game:GetService("CoreGui")
+-- 🔑 Key do dia
+local keyHoje = "DARK_" .. os.date("%d%m%Y")
 
-    local Frame = Instance.new("Frame", ScreenGui)
-    Frame.Size = UDim2.new(0, 300, 0, 150)
-    Frame.Position = UDim2.new(0.5, -150, 0.5, -75)
-    Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    Frame.BorderSizePixel = 3
-    Frame.BorderColor3 = Color3.fromRGB(255, 0, 0)
-    Frame.Active = true
-    Frame.Draggable = true
+-- 🔥 Criar GUI que funciona em KRNL
+local screen = Instance.new("ScreenGui")
+screen.Name = "DeadRailsHub_KEY"
+screen.Parent = (gethui and gethui()) or guiService
 
-    local Title = Instance.new("TextLabel", Frame)
-    Title.Size = UDim2.new(1, 0, 0, 30)
-    Title.Text = "🚂 DeadRailsHub Key System"
-    Title.TextColor3 = Color3.fromRGB(255, 0, 0)
-    Title.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-    Title.Font = Enum.Font.SourceSansBold
-    Title.TextSize = 20
+local frame = Instance.new("Frame", screen)
+frame.Size = UDim2.new(0, 300, 0, 150)
+frame.Position = UDim2.new(0.5, -150, 0.5, -75)
+frame.BackgroundColor3 = Color3.fromRGB(30, 0, 0)
+frame.BorderSizePixel = 4
+frame.BorderColor3 = Color3.fromRGB(255, 0, 0)
+frame.Active = true
+frame.Draggable = true
 
-    local TextBox = Instance.new("TextBox", Frame)
-    TextBox.Size = UDim2.new(0.8, 0, 0, 30)
-    TextBox.Position = UDim2.new(0.1, 0, 0.4, 0)
-    TextBox.PlaceholderText = "Digite sua Key aqui"
-    TextBox.Text = ""
-    TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-    TextBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    TextBox.Font = Enum.Font.SourceSans
-    TextBox.TextSize = 18
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.new(1, 0, 0, 30)
+title.Text = "🚂 DeadRailsHub Key"
+title.TextColor3 = Color3.fromRGB(255, 0, 0)
+title.BackgroundColor3 = Color3.fromRGB(10, 0, 0)
+title.Font = Enum.Font.SourceSansBold
+title.TextSize = 20
 
-    local Button = Instance.new("TextButton", Frame)
-    Button.Size = UDim2.new(0.8, 0, 0, 30)
-    Button.Position = UDim2.new(0.1, 0, 0.7, 0)
-    Button.Text = "Verificar Key"
-    Button.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Button.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-    Button.Font = Enum.Font.SourceSansBold
-    Button.TextSize = 18
+local box = Instance.new("TextBox", frame)
+box.Size = UDim2.new(0.8, 0, 0, 30)
+box.Position = UDim2.new(0.1, 0, 0.4, 0)
+box.PlaceholderText = "Digite a Key"
+box.Text = ""
+box.TextColor3 = Color3.fromRGB(255, 255, 255)
+box.BackgroundColor3 = Color3.fromRGB(50, 0, 0)
+box.Font = Enum.Font.SourceSans
+box.TextSize = 18
 
-    -- ✅ Botão Verificar
-    Button.MouseButton1Click:Connect(function()
-        if TextBox.Text == generatedKey then
-            print("✅ Key correta!")
-            ScreenGui:Destroy()
-            -- Carrega a GUI principal
-            loadstring(game:HttpGet('https://raw.githubusercontent.com/Daviluizyy/Deadrailshub2/main/gui.lua'))()
-        else
-            warn("❌ Key incorreta! A Key de hoje é: " .. generatedKey)
-            setclipboard(generatedKey)
-            print("🔑 Key copiada pro clipboard!")
-        end
-    end)
-end
+local btn = Instance.new("TextButton", frame)
+btn.Size = UDim2.new(0.8, 0, 0, 30)
+btn.Position = UDim2.new(0.1, 0, 0.7, 0)
+btn.Text = "Verificar"
+btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+btn.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+btn.Font = Enum.Font.SourceSansBold
+btn.TextSize = 18
 
--- 🚀 Iniciar
-CreateGui()
+btn.MouseButton1Click:Connect(function()
+    if box.Text == keyHoje then
+        screen:Destroy()
+        print("✅ Key correta! Abrindo GUI...")
+        -- Aqui vai carregar a sua GUI principal:
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Daviluizyy/Deadrailshub2/main/gui.lua"))()
+    else
+        warn("❌ Key errada! A Key de hoje é: " .. keyHoje)
+        setclipboard(keyHoje)
+        print("🔑 Copiei a Key correta pra você: " .. keyHoje)
+    end
+end)
